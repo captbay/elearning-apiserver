@@ -144,45 +144,4 @@ class Users extends ResourceController
         //
     }
 
-    public function login()
-    {
-        // Get the post data
-        $modelLogin = new UserModel();
-        $username = $this->request->getPost("username");
-        $password = $this->request->getPost("password");
-
-        $cekUser = $modelLogin->ceklogin($username);
-        if (count($cekUser->getResultArray()) > 0) {
-            $row = $cekUser->getRowArray();
-            $pass_hash = $row['password'];
-
-            if ($password == $pass_hash) {
-                $issuedate_claim = time();
-                $expired_time = $issuedate_claim + 3600;
-
-                $token = [
-                    'iat' => $issuedate_claim,
-                    'exp' => $expired_time
-                ];
-
-                $token = JWT::encode($token, getenv("TOKEN_KEY"), 'HS256');
-                $output = [
-                    'status' => 200,
-                    'error' => 200,
-                    'messages' => 'Login Successful',
-                    'token' => $token,
-                    'username' => $username,
-                    'email' => $row['useremail'],
-                    'noTelepon' => $row['noTelepon']
-                ];
-
-                return $this->respond($output, 200);
-            } else {
-                return $this->failNotFound("Maaf Username atau Password anda salah");
-            }
-        } else{
-            return $this->failNotFound("Maaf Username atau Password anda salah");
-        }
-        
-    }
 }
