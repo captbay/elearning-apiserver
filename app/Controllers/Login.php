@@ -18,8 +18,8 @@ class Login extends ResourceController
     {
         // Get the post data
         $modelLogin = new UserModel();
-        $username = $this->request->getVar("username");
-        $password = $this->request->getVar("password");
+        $username = $this->request->getPost("username");
+        $password = $this->request->getPost("password");
 
         $cekUser = $modelLogin->ceklogin($username);
         if (count($cekUser->getResultArray()) > 0) {
@@ -50,10 +50,8 @@ class Login extends ResourceController
             } else {
                 return $this->failNotFound("Maaf Username atau Password anda salah");
             }
-        } else{
+        } else {
             return $this->failNotFound("Maaf Username atau Password anda salah");
         }
-        
-        
     }
 }
