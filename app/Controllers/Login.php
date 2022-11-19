@@ -33,8 +33,6 @@ class Login extends ResourceController
                     'error' => 200,
                     'messages' => 'Login Successful',
                     'username' => $username,
-                    'email' => $row['useremail'],
-                    'noTelepon' => $row['noTelepon']
                 ];
 
                 return $this->respond($output, 200);
