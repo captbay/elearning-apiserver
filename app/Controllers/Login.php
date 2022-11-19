@@ -51,7 +51,17 @@ class Login extends ResourceController
                 return $this->failNotFound("Maaf Username atau Password anda salah");
             }
         } else {
-            return $this->failNotFound("Maaf Username atau Password anda salah");
+            $row = $cekUser->getRowArray();
+            $pass_hash = $row['password'];
+            $output = [
+                'messages' => $cekUser->getResultArray(),
+                'status' => 200,
+                'error' => 200,
+                'noTelepon' => $row['username'],
+                'noTelepon' => $row['password'],
+
+            ];
+            return $this->respond($output, 200);
         }
     }
 }
