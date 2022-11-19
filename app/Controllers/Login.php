@@ -52,8 +52,8 @@ class Login extends ResourceController
                     'messages' => $cekUser->getResultArray(),
                     'status' => 200,
                     'error' => 200,
-                    'noTelepon' => $row['username'],
-                    'noTelepon' => $row['password'],
+                    'nama' => $row['username'],
+                    'password' => $row['password'],
 
                 ];
                 return $this->respond($output, 200);
