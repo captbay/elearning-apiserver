@@ -14,7 +14,7 @@ class Login extends ResourceController
      *
      * @return mixed
      */
-    public function index()
+    public function create()
     {
         // Get the post data
         $modelLogin = new UserModel();
