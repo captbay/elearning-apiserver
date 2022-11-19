@@ -156,7 +156,7 @@ class Users extends ResourceController
             $row = $cekUser->getRowArray();
             $pass_hash = $row['password'];
 
-            if (password_verify($password, $pass_hash)) {
+            if ($password == $pass_hash) {
                 $issuedate_claim = time();
                 $expired_time = $issuedate_claim + 3600;
 
