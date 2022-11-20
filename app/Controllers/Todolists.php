@@ -131,22 +131,40 @@ class Todolists extends ResourceController
      */
     public function update($id = null)
     {
-        $modelTodolist = new TodolistModel();
-        $data = [
-            'tglDibuat' => $this->request->getVar("tglDibuat"),
-            'tglDeadline' => $this->request->getVar("tglDeadline"),
-            'judul' => $this->request->getVar("judul"),
-            'pesan' => $this->request->getVar("pesan"),
-            'status' => $this->request->getVar("status"),
-        ];
-        $data = $this->request->getRawInput();
-        $modelTodolist->update($id, $data);
+        $model = new Todolists();
+
+        $data = json_decode(trim(file_get_contents('php://input')), true) ?? $this->request->getPost();
+        $data["id"] = $id;
+        if (!$model->save($data)) {
+            $response = [
+                'status' => 404,
+                'error' => true,
+                'message' => $model->errors(),
+            ];
+            return $this->respond($response, 404);
+        }
         $response = [
-            'status' => 200,
-            'error' => null,
-            'message' => "Data Anda dengan id $id berhasil dibaharukan"
+            'status' => 201,
+            'error' => "false",
+            'message' => "Data berhasil diupdate"
         ];
-        return $this->respond($response);
+        return $this->respond($response, 201);
+        // $modelTodolist = new TodolistModel();
+        // $data = [
+        //     'tglDibuat' => $this->request->getVar("tglDibuat"),
+        //     'tglDeadline' => $this->request->getVar("tglDeadline"),
+        //     'judul' => $this->request->getVar("judul"),
+        //     'pesan' => $this->request->getVar("pesan"),
+        //     'status' => $this->request->getVar("status"),
+        // ];
+        // $data = $this->request->getRawInput();
+        // $modelTodolist->update($id, $data);
+        // $response = [
+        //     'status' => 200,
+        //     'error' => null,
+        //     'message' => "Data Anda dengan id $id berhasil dibaharukan"
+        // ];
+        // return $this->respond($response);
     }
 
     /**
