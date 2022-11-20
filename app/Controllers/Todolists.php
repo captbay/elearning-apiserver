@@ -60,43 +60,58 @@ class Todolists extends ResourceController
     public function create()
     {
         $modelTodolist = new TodolistModel();
-        $tglDibuat = $this->request->getPost("tglDibuat");
-        $tglDeadline = $this->request->getPost("tglDeadline");
-        $judul = $this->request->getPost("judul");
-        $pesan = $this->request->getPost("pesan");
-        $status = $this->request->getPost("status");
-        $validation = \Config\Services::validation();
-        $valid = $this->validate([
-            'judul' => [
-                'rules' => 'is_unique[todolists.judul]',
-                'label' => 'Judul Todolist',
-                'errors' => [
-                    'is_unique' => "{field} sudah ada"
-                ]
-            ]
-        ]);
-        if (!$valid) {
+        $data = json_decode(trim(file_get_contents('php://input')), true) ?? $this->request->getPost();
+        if (!$modelTodolist->save($data)) {
             $response = [
                 'status' => 404,
                 'error' => true,
-                'message' => $validation->getError("judul"),
+                'message' => $modelTodolist->errors(),
             ];
             return $this->respond($response, 404);
-        } else {
-            $modelTodolist->insert([
-                'tglDibuat' => $tglDibuat,
-                'tglDeadline' => $tglDeadline,
-                'judul' => $judul,
-                'pesan' => $pesan,
-                'status' => $status,
-            ]);
-            $response = [
-                'status' => 201,
-                'error' => "false",
-                'message' => "Data berhasil disimpan"
-            ];
-            return $this->respond($response, 201);
         }
+        $response = [
+            'status' => 201,
+            'error' => "false",
+            'message' => "Data berhasil disimpan"
+        ];
+        return $this->respond($response, 201);
+        // $tglDibuat = $this->request->getPost("tglDibuat");
+        // $tglDeadline = $this->request->getPost("tglDeadline");
+        // $judul = $this->request->getPost("judul");
+        // $pesan = $this->request->getPost("pesan");
+        // $status = $this->request->getPost("status");
+        // $validation = \Config\Services::validation();
+        // $valid = $this->validate([
+        //     'judul' => [
+        //         'rules' => 'is_unique[todolists.judul]',
+        //         'label' => 'Judul Todolist',
+        //         'errors' => [
+        //             'is_unique' => "{field} sudah ada"
+        //         ]
+        //     ]
+        // ]);
+        // if (!$valid) {
+        //     $response = [
+        //         'status' => 404,
+        //         'error' => true,
+        //         'message' => $validation->getError("judul"),
+        //     ];
+        //     return $this->respond($response, 404);
+        // } else {
+        //     $modelTodolist->insert([
+        //         'tglDibuat' => $tglDibuat,
+        //         'tglDeadline' => $tglDeadline,
+        //         'judul' => $judul,
+        //         'pesan' => $pesan,
+        //         'status' => $status,
+        //     ]);
+        //     $response = [
+        //         'status' => 201,
+        //         'error' => "false",
+        //         'message' => "Data berhasil disimpan"
+        //     ];
+        //     return $this->respond($response, 201);
+        // }
     }
 
     /**
