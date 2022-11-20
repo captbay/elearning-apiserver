@@ -68,7 +68,7 @@ class Todolists extends ResourceController
         $validation = \Config\Services::validation();
         $valid = $this->validate([
             'judul' => [
-                'rules' => 'is_unique[todolist.judul]',
+                'rules' => 'is_unique[todolists.judul]',
                 'label' => 'Judul Todolist',
                 'errors' => [
                     'is_unique' => "{field} sudah ada"

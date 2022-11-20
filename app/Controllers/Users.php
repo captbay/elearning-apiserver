@@ -68,7 +68,7 @@ class Users extends ResourceController
         $validation = \Config\Services::validation();
         $valid = $this->validate([
             'username' => [
-                'rules' => 'is_unique[user.username]',
+                'rules' => 'is_unique[users.username]',
                 'label' => 'Username User',
                 'errors' => [
                     'is_unique' => "{field} sudah ada"
@@ -143,5 +143,4 @@ class Users extends ResourceController
     {
         //
     }
-
 }
