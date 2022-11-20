@@ -59,44 +59,61 @@ class Users extends ResourceController
      */
     public function create()
     {
-        $modelUser = new UserModel();
-        $username = $this->request->getPost("username");
-        $password = $this->request->getPost("password");
-        $email = $this->request->getPost("email");
-        $tglLahir = $this->request->getPost("tglLahir");
-        $noTelp = $this->request->getPost("noTelp");
-        $validation = \Config\Services::validation();
-        $valid = $this->validate([
-            'username' => [
-                'rules' => 'is_unique[users.username]',
-                'label' => 'Username User',
-                'errors' => [
-                    'is_unique' => "{field} sudah ada"
-                ]
-            ]
-        ]);
-        if (!$valid) {
+        // $modelUser = new UserModel();
+        $modelMhs = new UserModel();
+        $data = json_decode(trim(file_get_contents('php://input')), true) ?? $this->request->getPost();
+        $data["password"] = password_hash($data["password"], PASSWORD_BCRYPT);
+        if (!$modelMhs->save($data)) {
             $response = [
                 'status' => 404,
                 'error' => true,
-                'message' => $validation->getError("username"),
+                'message' => $modelMhs->errors(),
             ];
             return $this->respond($response, 404);
-        } else {
-            $modelUser->insert([
-                'username' => $username,
-                'password' => $password,
-                'email' => $email,
-                'tglLahir' => $tglLahir,
-                'noTelp' => $noTelp,
-            ]);
-            $response = [
-                'status' => 201,
-                'error' => "false",
-                'message' => "Data berhasil disimpan"
-            ];
-            return $this->respond($response, 201);
         }
+        $response = [
+            'status' => 201,
+            'error' => "false",
+            'message' => "Data berhasil disimpan"
+        ];
+        return $this->respond($response, 201);
+        // $username = $this->request->getPost("username");
+        // $password = $this->request->getPost("password");
+        // $email = $this->request->getPost("email");
+        // $tglLahir = $this->request->getPost("tglLahir");
+        // $noTelp = $this->request->getPost("noTelp");
+        // $validation = \Config\Services::validation();
+        // $valid = $this->validate([
+        //     'username' => [
+        //         'rules' => 'is_unique[users.username]',
+        //         'label' => 'Username User',
+        //         'errors' => [
+        //             'is_unique' => "{field} sudah ada"
+        //         ]
+        //     ]
+        // ]);
+        // if (!$valid) {
+        //     $response = [
+        //         'status' => 404,
+        //         'error' => true,
+        //         'message' => $validation->getError("username"),
+        //     ];
+        //     return $this->respond($response, 404);
+        // } else {
+        //     $modelUser->insert([
+        //         'username' => $username,
+        //         'password' => $password,
+        //         'email' => $email,
+        //         'tglLahir' => $tglLahir,
+        //         'noTelp' => $noTelp,
+        //     ]);
+        //     $response = [
+        //         'status' => 201,
+        //         'error' => "false",
+        //         'message' => "Data berhasil disimpan"
+        //     ];
+        //     return $this->respond($response, 201);
+        // }
     }
 
     /**
@@ -116,22 +133,43 @@ class Users extends ResourceController
      */
     public function update($id = null)
     {
-        $modelUser = new UserModel();
-        $data = [
-            'username' => $this->request->getVar("username"),
-            'password' => $this->request->getVar("password"),
-            'email' => $this->request->getVar("email"),
-            'tglLahir' => $this->request->getVar("tglLahir"),
-            'noTelp' => $this->request->getVar("noTelp"),
-        ];
-        $data = $this->request->getRawInput();
-        $modelUser->update($id, $data);
+        // $modelUser = new UserModel();
+        $model = new UserModel();
+        $data = json_decode(trim(file_get_contents('php://input')), true) ?? $this->request->getPost();
+
+        if ($data["password"] != NULL)
+            $data["password"] = password_hash($data["password"], PASSWORD_BCRYPT);
+
+        $data["id"] = $id;
+        if (!$model->save($data)) {
+            $response = [
+                'status' => 404,
+                'error' => true,
+                'message' => $model->errors(),
+            ];
+            return $this->respond($response, 404);
+        }
         $response = [
-            'status' => 200,
-            'error' => null,
-            'message' => "Data Anda dengan id $id berhasil dibaharukan"
+            'status' => 201,
+            'error' => "false",
+            'message' => "Data berhasil diupdate"
         ];
-        return $this->respond($response);
+        return $this->respond($response, 201);
+        // $data = [
+        //     'username' => $this->request->getVar("username"),
+        //     'password' => $this->request->getVar("password"),
+        //     'email' => $this->request->getVar("email"),
+        //     'tglLahir' => $this->request->getVar("tglLahir"),
+        //     'noTelp' => $this->request->getVar("noTelp"),
+        // ];
+        // $data = $this->request->getRawInput();
+        // $modelUser->update($id, $data);
+        // $response = [
+        //     'status' => 200,
+        //     'error' => null,
+        //     'message' => "Data Anda dengan id $id berhasil dibaharukan"
+        // ];
+        // return $this->respond($response);
     }
 
     /**
@@ -142,5 +180,18 @@ class Users extends ResourceController
     public function delete($id = null)
     {
         //
+        $modelMhs = new UserModel();
+        $cekData = $modelMhs->find($id);
+        if ($cekData) {
+            $modelMhs->delete($id);
+            $response = [
+                'status' => 200,
+                'error' => null,
+                'message' => "Selamat data sudah berhasil dihapus "
+            ];
+            return $this->respondDeleted($response);
+        } else {
+            return $this->failNotFound('Data tidak ditemukan kembali');
+        }
     }
 }

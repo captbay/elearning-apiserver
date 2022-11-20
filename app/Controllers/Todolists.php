@@ -131,7 +131,7 @@ class Todolists extends ResourceController
      */
     public function update($id = null)
     {
-        $model = new Todolists();
+        $model = new TodolistModel();
 
         $data = json_decode(trim(file_get_contents('php://input')), true) ?? $this->request->getPost();
         $data["id"] = $id;
