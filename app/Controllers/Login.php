@@ -16,22 +16,6 @@ class Login extends ResourceController
         $model = new UserModel();
         $data = json_decode(trim(file_get_contents('php://input')), true) ?? $this->request->getPost();
         $user = $model->where("username", $data['username'])->first();
-
-        // $validation = $this->validate([
-        //     'title' => [
-        //         'rules'  => 'required',
-        //         'errors' => [
-        //             'required' => 'Masukkan Judul Post.'
-        //         ]
-        //     ],
-        //     'content'    => [
-        //         'rules'  => 'required',
-        //         'errors' => [
-        //             'required' => 'Masukkan konten Post.'
-        //         ]
-        //     ],
-        // ]);
-
         if (!$user) {
             $response = [
                 'status' => 404,
